@@ -1,0 +1,5 @@
+torch
+transformers
+dotenv
+accelerate
+huggingface_hub[cli]
