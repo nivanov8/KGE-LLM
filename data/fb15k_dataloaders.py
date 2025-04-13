@@ -3,7 +3,7 @@ import requests
 from torch.utils.data import Dataset, DataLoader
 
 class FB15k237DataModule:
-    def __init__(self, data_dir='.', batch_size=32):
+    def __init__(self, data_dir='data/', batch_size=32):
         self.data_dir = data_dir
         self.batch_size = batch_size
         self.base_url = "https://huggingface.co/datasets/KGraph/FB15k-237/resolve/main/data"
