@@ -20,7 +20,7 @@ class LlamaModel:
         tokens = self.tokenizer(prompt, return_tensors="pt")
 
         with torch.no_grad():
-            output = self.model.generate(**tokens, max_length=100, eos_token_id=self.tokenizer.eos_token_id)
+            output = self.model.generate(**tokens, max_length=300, eos_token_id=self.tokenizer.eos_token_id)
 
         raw_response = self.tokenizer.decode(output[0], skip_special_tokens=True)
         processed_response = raw_response.split("assistant")[-1].strip()

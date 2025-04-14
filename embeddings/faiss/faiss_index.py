@@ -15,10 +15,11 @@ class FreeBaseFaissIndex():
     
     def add_embeddings_to_index(self):
         all_entities = self._preprocess_entities()
-        
+        named_entities = [x[1] for x in all_entities]
+
         # create embeddings for entities
         print(f"Starting to create embeddings, could take a minute")
-        entity_embeddings = self.embedding_model.get_embedding(all_entities, self.embedding_type).cpu()
+        entity_embeddings = self.embedding_model.get_embedding(named_entities, self.embedding_type).cpu()
         print(f"Done creating embeddings.")
 
         # index the embeddings
@@ -39,9 +40,9 @@ class FreeBaseFaissIndex():
         
         entities = []
         for line in lines:
-            _, name_part = line.strip().split(maxsplit=1)
+            id_part, name_part = line.strip().split(maxsplit=1)
             name_part = name_part.strip()
             name_part = name_part.replace("_", " ")
-            entities.append(name_part)
+            entities.append((id_part, name_part))
     
         return sorted(entities)
