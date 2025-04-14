@@ -7,6 +7,27 @@ import torch.optim as optim
 from tqdm import tqdm
 
 
+import pandas as pd
+from torch.utils.data import Dataset, DataLoader
+
+class LLMOutputTailDataset(Dataset):
+    def __init__(self, csv_path):
+        df = pd.read_csv(csv_path)
+
+        # Construct prompts as LLM inputs
+        self.llm_outputs = df[5].tolist()
+        self.tail_entities = df[4].tolist()
+
+    def __len__(self):
+        return len(self.llm_outputs)
+
+    def __getitem__(self, idx):
+        return self.llm_outputs[idx], self.tail_entities[idx]
+
+# Usage
+csv_path = "data/finetune.csv"
+dataset = LLMOutputTailDataset(csv_path)
+dataloader = DataLoader(dataset, batch_size=1, shuffle=True)
 
 # Sample data (replace with actual dataset)
 # llm_outputs = ["What currency is used in Lycoming County?", "Who is the president of Canada?"]
@@ -20,8 +41,8 @@ learning_rate = 2e-5
 # Device
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-fb_loader = FB15k237DataModule(batch_size=16)
-dataloader, _, _ = fb_loader.get_dataloaders()
+# fb_loader = FB15k237DataModule(batch_size=16)
+# dataloader, _, _ = fb_loader.get_dataloaders()
 
 # # Prepare dataset and dataloader
 # dataset = LLMOutputTailDataset(llm_outputs, tail_entities)
