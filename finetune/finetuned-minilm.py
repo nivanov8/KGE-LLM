@@ -1,0 +1,56 @@
+from embeddings.embedding_models.minilm import MiniLMV2EmbeddingModel
+from data.fb15k_dataloaders import FB15k237DataModule
+
+from torch.utils.data import Dataset, DataLoader
+import torch.nn as nn
+import torch.optim as optim
+from tqdm import tqdm
+
+
+
+# Sample data (replace with actual dataset)
+# llm_outputs = ["What currency is used in Lycoming County?", "Who is the president of Canada?"]
+# tail_entities = ["United_States_dollar", "Justin_Trudeau"]
+
+# Hyperparams
+batch_size = 8
+num_epochs = 5
+learning_rate = 2e-5
+
+# Device
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+fb_loader = FB15k237DataModule(batch_size=16)
+dataloader, _, _ = fb_loader.get_dataloaders()
+
+# # Prepare dataset and dataloader
+# dataset = LLMOutputTailDataset(llm_outputs, tail_entities)
+# dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+
+# Init model
+model = MiniLMV2EmbeddingModel(device=device)
+
+# Loss and optimizer
+criterion = nn.CosineEmbeddingLoss(margin=0.2)
+optimizer = optim.AdamW(model.model.parameters(), lr=learning_rate)
+
+# Finetuning loop
+model.model.train()
+for epoch in range(num_epochs):
+    total_loss = 0.0
+    for llm_batch, tail_batch in tqdm(dataloader, desc=f"Epoch {epoch+1}"):
+        llm_emb = model(llm_batch)
+        tail_emb = model(tail_batch)
+
+        # Target: 1 for matching pairs
+        target = torch.ones(llm_emb.size(0)).to(device)
+
+        loss = criterion(llm_emb, tail_emb, target)
+
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+        total_loss += loss.item()
+
+    print(f"Epoch {epoch+1} Loss: {total_loss:.4f}")
