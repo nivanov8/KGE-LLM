@@ -69,14 +69,3 @@ class FB15k237DataModule:
 
     def get_dataloaders(self):
         return self.train_loader, self.valid_loader, self.test_loader
-
-
-## TEST
-fb_loader = FB15k237DataModule(batch_size=16)
-train_loader, valid_loader, test_loader = fb_loader.get_dataloaders()
-
-for batch in test_loader:
-    heads, relations, tails = batch
-    for h, r, t in zip(heads, relations, tails):
-        print(f"({h}, {r}, {t})")
-    break
