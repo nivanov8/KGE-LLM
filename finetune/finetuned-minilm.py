@@ -24,19 +24,22 @@ class LLMOutputTailDataset(Dataset):
     def __getitem__(self, idx):
         return self.llm_outputs[idx], self.tail_entities[idx]
 
-# Usage
-csv_path = "data/finetune.csv"
-dataset = LLMOutputTailDataset(csv_path)
-dataloader = DataLoader(dataset, batch_size=1, shuffle=True)
-
-# Sample data (replace with actual dataset)
-# llm_outputs = ["What currency is used in Lycoming County?", "Who is the president of Canada?"]
-# tail_entities = ["United_States_dollar", "Justin_Trudeau"]
 
 # Hyperparams
 batch_size = 8
 num_epochs = 5
 learning_rate = 2e-5
+
+
+# Usage
+csv_path = "/scratch/expires-2025-Apr-19/KGE/finetune1.csv"
+dataset = LLMOutputTailDataset(csv_path)
+dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+
+# Sample data (replace with actual dataset)
+# llm_outputs = ["What currency is used in Lycoming County?", "Who is the president of Canada?"]
+# tail_entities = ["United_States_dollar", "Justin_Trudeau"]
+
 
 # Device
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -59,7 +62,7 @@ optimizer = optim.AdamW(model.model.parameters(), lr=learning_rate)
 model.model.train()
 for epoch in range(num_epochs):
     total_loss = 0.0
-    for llm_batch, tail_batch in tqdm(dataloader, desc=f"Epoch {epoch+1}"):
+    for head_id_batch, head_batch, relation_batch, tail_batch, tail_id_batch, llm_batch in tqdm(dataloader, desc=f"Epoch {epoch+1}"):
         llm_emb = model(llm_batch)
         tail_emb = model(tail_batch)
 
@@ -73,5 +76,11 @@ for epoch in range(num_epochs):
         optimizer.step()
 
         total_loss += loss.item()
-
     print(f"Epoch {epoch+1} Loss: {total_loss:.4f}")
+
+    # Save model after each epoch
+    save_path = f"/scratch/expires-2025-Apr-19/KGE/minilm_finetuned_epoch{epoch+1}.pt"
+    torch.save(model.model.state_dict(), save_path)
+    print(f"Saved model checkpoint to {save_path}")
+
+  
