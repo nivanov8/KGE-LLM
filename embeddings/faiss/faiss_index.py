@@ -27,10 +27,12 @@ class FreeBaseFaissIndex():
 
         print(f"Written total of {self.faiss_index.ntotal} embeddings to index")
     
-    def save_index(self, save_dir="/scratch/expires-2025-Apr-19/KGE/entities_index.faiss"):
+    def save_index(self, save_dir=""):
+        save_dir = save_dir if save_dir else f"/scratch/expires-2025-Apr-19/KGE/entities_index_{self.embedding_model.model.config._name_or_path.replace('/', '_')}.faiss"
         faiss.write_index(self.faiss_index, save_dir)
     
-    def load_index(self, load_dir="/scratch/expires-2025-Apr-19/KGE/entities_index.faiss"):
+    def load_index(self, load_dir=""):
+        load_dir = load_dir if load_dir else f"/scratch/expires-2025-Apr-19/KGE/entities_index_{self.embedding_model.model.config._name_or_path.replace('/', '_')}.faiss"
         self.faiss_index = faiss.read_index(load_dir)
         print(f"Loaded faiss index: {self.faiss_index} with {self.faiss_index.ntotal} embeddings")
     

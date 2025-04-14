@@ -1,6 +1,7 @@
 import torch
 import os
 from transformers import AutoModel, AutoTokenizer
+import torch.nn.functional as F
 
 from embeddings.embedding_type import EmbeddingType
 
@@ -16,7 +17,6 @@ class ModernBERTEmbeddingModel():
 
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_name, cache_dir=self.cache_dir)
         self.model = AutoModel.from_pretrained(self.model_name, cache_dir=self.cache_dir)
-    
 
     def get_embedding(self, batch, embedding_type = EmbeddingType.CLS_TOKEN_EMBEDDING):
         inputs = self.tokenizer(batch, padding=True, truncation=True, return_tensors="pt").to(self.device)
@@ -27,13 +27,13 @@ class ModernBERTEmbeddingModel():
             predictions = outputs.last_hidden_state
         
         if embedding_type == EmbeddingType.CLS_TOKEN_EMBEDDING:
-            return predictions[:, 0, :]
+            return F.normalize(predictions[:, 0, :], p=2, dim=1)
         
         attention_mask = inputs['attention_mask']
         token_embeddings = outputs.last_hidden_state
         mask_expanded = attention_mask.unsqueeze(-1).expand(token_embeddings.size())
         mean_embedding = (token_embeddings * mask_expanded).sum(1) / mask_expanded.sum(1)
 
-        return mean_embedding
+        return F.normalize(mean_embedding, p=2, dim=1)
 
 
