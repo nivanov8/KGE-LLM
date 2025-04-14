@@ -47,7 +47,7 @@ class FB15k237DataModule:
                 h_name = self.mid2name.get(h, h)
                 t_name = self.mid2name.get(t, t)
                 r_clean = r.replace('.', '/')  # just clean up dots, keep slashes
-                triples.append((h_name, r_clean, t_name))
+                triples.append((h, h_name, r_clean, t_name, t))
         return triples
     
     def _prepare_dataloaders(self):

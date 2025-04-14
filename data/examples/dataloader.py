@@ -5,7 +5,7 @@ fb_loader = FB15k237DataModule(batch_size=16)
 train_loader, valid_loader, test_loader = fb_loader.get_dataloaders()
 
 for batch in test_loader:
-    heads, relations, tails = batch
-    for h, r, t in zip(heads, relations, tails):
-        print(f"({h}, {r}, {t})")
+    head_id, heads, relations, tails, tail_id = batch
+    for h_id, h, r, t, t_id in zip(head_id, heads, relations, tails, tail_id):
+        print(f"({h_id}, {h}, {r}, {t}, {t_id})")
     break
