@@ -4,3 +4,4 @@ dotenv
 accelerate
 huggingface_hub[cli]
 faiss-cpu
+tiktoken
