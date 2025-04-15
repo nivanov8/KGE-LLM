@@ -10,12 +10,13 @@ torch.set_float32_matmul_precision('high')
 
 class MiniLMV2EmbeddingModel():
 
-    def __init__(self, cache_dir="/scratch/expires-2025-Apr-19/KGE", device=None):
+    def __init__(self, model_path="", cache_dir="/scratch/expires-2025-Apr-19/KGE", device=None):
         self.cache_dir = cache_dir
-        self.model_name = "sentence-transformers/all-MiniLM-L6-v2"
+        self.model_name = model_path if model_path else "sentence-transformers/all-MiniLM-L6-v2"
+        self.tokenizer_name = "sentence-transformers/all-MiniLM-L6-v2"
         self.device = torch.device("cpu") if not device else device
 
-        self.tokenizer = AutoTokenizer.from_pretrained(self.model_name, cache_dir=self.cache_dir)
+        self.tokenizer = AutoTokenizer.from_pretrained(self.tokenizer_name, cache_dir=self.cache_dir)
         self.model = AutoModel.from_pretrained(self.model_name, cache_dir=self.cache_dir)
     
 

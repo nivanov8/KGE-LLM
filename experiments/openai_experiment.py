@@ -38,7 +38,7 @@ def call_chatgpt(head, relation, model="gpt-4o-mini"):
 def run_expriment():
     fbloader = FB15k237DataModule(batch_size=1)
     # embedding_model = ModernBERTEmbeddingModel(device=torch.device("cuda" if torch.cuda.is_available() else "cpu"))
-    embedding_model = MiniLMV2EmbeddingModel(device=torch.device("cuda" if torch.cuda.is_available() else "cpu"))
+    embedding_model = MiniLMV2EmbeddingModel(model_path="/scratch/expires-2025-Apr-19/svajpayee/checkpoints/", device=torch.device("cuda" if torch.cuda.is_available() else "cpu"))
     _, _, test_loader = fbloader.get_dataloaders()
 
     freebase_index = FreeBaseFaissIndex(embedding_model, "data/FB15k_mid2name.txt")
