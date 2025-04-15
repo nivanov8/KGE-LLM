@@ -11,15 +11,18 @@ class FreeBaseFaissIndex():
         self.embedding_dim = self.embedding_model.model.config.hidden_size
         self.entities_data_path = entities_data_path
 
-        self.faiss_index = faiss.IndexFlatL2(self.embedding_dim)
+        self.faiss_index = faiss.IndexFlatIP(self.embedding_dim)
     
     def add_embeddings_to_index(self):
         all_entities = self._preprocess_entities()
         named_entities = [x[1] for x in all_entities]
+        #named_entities = ["October"]
 
         # create embeddings for entities
         print(f"Starting to create embeddings, could take a minute")
-        entity_embeddings = self.embedding_model.get_embedding(named_entities, self.embedding_type).cpu()
+        #print(self.embedding_model)
+        entity_embeddings = self.embedding_model.get_embedding(named_entities, self.embedding_type).detach().cpu()
+        #print(entity_embeddings)
         print(f"Done creating embeddings.")
 
         # index the embeddings

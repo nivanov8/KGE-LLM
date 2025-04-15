@@ -38,6 +38,7 @@ def get_metrics(results, ground_truth):
         "Hits@1": hits_at_k(results, ground_truth, k=1),
         "Hits@3": hits_at_k(results, ground_truth, k=3),
         "Hits@10": hits_at_k(results, ground_truth, k=10),
+        "Hits@20": hits_at_k(results, ground_truth, k=20),
         "MRR": mean_reciprocal_rank(results, ground_truth),
         "MR": mean_rank(results, ground_truth)
     }

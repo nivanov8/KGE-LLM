@@ -8,8 +8,10 @@ import torch
 from openai import OpenAI
 from itertools import islice
 
+import torch.nn.functional as F
+
 # Make sure to set your OpenAI API key
-client = OpenAI(api_key="INSERT")
+client = OpenAI(api_key="INSER")
 
 def get_prompt(head, relation):
     return (
@@ -37,8 +39,10 @@ def call_chatgpt(head, relation, model="gpt-4o-mini"):
 
 def run_expriment():
     fbloader = FB15k237DataModule(batch_size=1)
-    # embedding_model = ModernBERTEmbeddingModel(device=torch.device("cuda" if torch.cuda.is_available() else "cpu"))
-    embedding_model = MiniLMV2EmbeddingModel(model_path="/scratch/expires-2025-Apr-19/svajpayee/checkpoints/", device=torch.device("cuda" if torch.cuda.is_available() else "cpu"))
+    #embedding_model = ModernBERTEmbeddingModel(device=torch.device("cuda" if torch.cuda.is_available() else "cpu"))
+    #embedding_model = MiniLMV2EmbeddingModel(model_path="/scratch/expires-2025-Apr-19/svajpayee/checkpoints", device=torch.device("cuda" if torch.cuda.is_available() else "cpu"))
+    #embedding_model = MiniLMV2EmbeddingModel(device=torch.device("cuda" if torch.cuda.is_available() else "cpu"))
+    embedding_model = MiniLMV2EmbeddingModel(model_path="/scratch/expires-2025-Apr-19/KGE/finetuned", device=torch.device("cuda" if torch.cuda.is_available() else "cpu"))
     _, _, test_loader = fbloader.get_dataloaders()
 
     freebase_index = FreeBaseFaissIndex(embedding_model, "data/FB15k_mid2name.txt")
@@ -54,12 +58,24 @@ def run_expriment():
 
         #prompt = get_prompt(head, relation)
 
+        
         out = call_chatgpt(head, relation)
-        print(head, relation, tail, out)
+        #out = "October"
+        
+        #print(head, relation, tail, out)
+        ground_truth_idx = entities_id.index(tail_id)
+        #print(freebase_index.faiss_index.reconstruct(ground_truth_idx))
+        #print(embedding_model.get_embedding(["October"]))
+        embedding = embedding_model.get_embedding([out]).detach().cpu()
+        embedding_true = embedding_model.get_embedding([tail]).detach().cpu()
+        #print(embedding_true)
 
-        embedding = embedding_model.get_embedding([out]).cpu()
-        distances, indices = freebase_index.faiss_index.search(embedding, k=10)
+        print(torch.inner(embedding, embedding_true).item())
+        distances, indices = freebase_index.faiss_index.search(embedding, k=20)
+        print(distances)
+
         indices = indices.tolist()[0]
+        print([entities[i] for i in indices])
 
         ground_truth_idx = entities_id.index(tail_id)
         predictions.append(indices)

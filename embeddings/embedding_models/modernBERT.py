@@ -18,7 +18,7 @@ class ModernBERTEmbeddingModel():
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_name, cache_dir=self.cache_dir)
         self.model = AutoModel.from_pretrained(self.model_name, cache_dir=self.cache_dir)
 
-    def get_embedding(self, batch, embedding_type = EmbeddingType.CLS_TOKEN_EMBEDDING):
+    def get_embedding(self, batch, embedding_type = EmbeddingType.MEAN_POOLING_EMBEDDING):
         inputs = self.tokenizer(batch, padding=True, truncation=True, return_tensors="pt").to(self.device)
         self.model.to(self.device)
 
