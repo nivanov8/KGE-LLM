@@ -44,8 +44,8 @@ class FB15k237DataModule:
         with open(filepath, "r", encoding="utf-8") as f:
             for line in f:
                 h, r, t = line.strip().split("\t")
-                h_name = self.mid2name.get(h, h)
-                t_name = self.mid2name.get(t, t)
+                h_name = self.mid2name.get(h, h).replace("_", " ")
+                t_name = self.mid2name.get(t, t).replace("_", " ")
                 r_clean = r.replace('.', '/')  # just clean up dots, keep slashes
                 triples.append((h, h_name, r_clean, t_name, t))
         return triples
@@ -63,7 +63,7 @@ class FB15k237DataModule:
         self.valid_dataset = ReadableTripleDataset(self._load_triples(self.files["valid.txt"]))
         self.test_dataset  = ReadableTripleDataset(self._load_triples(self.files["test.txt"]))
 
-        self.train_loader = DataLoader(self.train_dataset, batch_size=self.batch_size, shuffle=True)
+        self.train_loader = DataLoader(self.train_dataset, batch_size=self.batch_size, shuffle=False)
         self.valid_loader = DataLoader(self.valid_dataset, batch_size=self.batch_size, shuffle=False)
         self.test_loader  = DataLoader(self.test_dataset,  batch_size=self.batch_size, shuffle=False)
 
