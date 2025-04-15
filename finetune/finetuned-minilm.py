@@ -49,10 +49,6 @@ csv_path = "/scratch/expires-2025-Apr-19/KGE/finetune_sam_copy.csv"
 dataset = LLMOutputTailDataset(csv_path)
 dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
-# Sample data (replace with actual dataset)
-# llm_outputs = ["What currency is used in Lycoming County?", "Who is the president of Canada?"]
-# tail_entities = ["United_States_dollar", "Justin_Trudeau"]
-
 
 # Device
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
