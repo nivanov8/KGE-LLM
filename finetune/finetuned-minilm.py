@@ -86,8 +86,7 @@ for epoch in range(num_epochs):
     print(f"Epoch {epoch+1} Loss: {total_loss:.4f}")
 
     # Save model after each epoch
-    save_path = f"/scratch/expires-2025-Apr-19/KGE/checkpoints/minilm_finetuned_epoch{epoch+1}.pt"
+    save_path = f"/w/331/svajpayee/KGE-LLM/checkpoints/minilm_finetuned_epoch{epoch+1}.pt"
     torch.save(model.model.state_dict(), save_path)
     print(f"Saved model checkpoint to {save_path}")
 
-  
