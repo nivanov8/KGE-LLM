@@ -19,12 +19,15 @@ class MiniLMV2EmbeddingModel():
         self.model = AutoModel.from_pretrained(self.model_name, cache_dir=self.cache_dir)
     
 
-    def get_embedding(self, batch, embedding_type = EmbeddingType.CLS_TOKEN_EMBEDDING):
+    def get_embedding(self, batch, training=True, embedding_type = EmbeddingType.CLS_TOKEN_EMBEDDING):
         inputs = self.tokenizer(batch, padding=True, truncation=True, return_tensors="pt").to(self.device)
         self.model.to(self.device)
 
-        with torch.no_grad():
+        if training:
             outputs = self.model(**inputs)
+        else:
+            with torch.no_grad():
+                outputs = self.model(**inputs)
         
         batch_embeddings = self.mean_pooling(outputs, inputs["attention_mask"])
 
@@ -35,7 +38,6 @@ class MiniLMV2EmbeddingModel():
         input_mask_expanded = attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
         return torch.sum(token_embeddings * input_mask_expanded, 1) / torch.clamp(input_mask_expanded.sum(1), min=1e-9)
     
-    @staticmethod
     def freeze_all_but_top_layers(self, num_layers_to_unfreeze=2):
         # Freeze everything first
         for param in self.model.parameters():
