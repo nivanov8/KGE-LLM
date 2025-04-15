@@ -34,5 +34,20 @@ class MiniLMV2EmbeddingModel():
         token_embeddings = model_output[0] #First element of model_output contains all token embeddings
         input_mask_expanded = attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
         return torch.sum(token_embeddings * input_mask_expanded, 1) / torch.clamp(input_mask_expanded.sum(1), min=1e-9)
+    
+    def freeze_all_but_top_layers(self, num_layers_to_unfreeze=2):
+        # Freeze everything first
+        for param in self.model.parameters():
+            param.requires_grad = False
+
+        # Unfreeze top encoder layers (e.g., transformer.layer.5 and .4 for 2 layers)
+        for i in range(6 - num_layers_to_unfreeze, 6):
+            for param in self.model.base_model.encoder.layer[i].parameters():
+                param.requires_grad = True
+
+        # Unfreeze the pooler or output layer if needed (MiniLM may not have one)
+        if hasattr(self.model, 'pooler'):
+            for param in self.model.pooler.parameters():
+                param.requires_grad = True
 
 
