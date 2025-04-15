@@ -44,15 +44,9 @@ dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 # Device
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# fb_loader = FB15k237DataModule(batch_size=16)
-# dataloader, _, _ = fb_loader.get_dataloaders()
-
-# # Prepare dataset and dataloader
-# dataset = LLMOutputTailDataset(llm_outputs, tail_entities)
-# dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
-
 # Init model
 model = MiniLMV2EmbeddingModel(device=device)
+model.freeze_all_but_top_layers(num_layers_to_unfreeze=2)  # Finetune top 2 layers
 
 # Loss and optimizer
 criterion = nn.CosineEmbeddingLoss(margin=0.2)
