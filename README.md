@@ -14,6 +14,7 @@
 1. To run experiments run ```python -m experiments.openai_experiment```
 2. Ensure the conda environment is active
 3. Ensure you have an OpenAI API Key entered in the code
+4. Ensure you are in the root directory of the repository
 
 ## Finetuning
-1. To run finetuning run ```python -m finetune.finetuned-minilm
+1. To run finetuning run ```python -m finetune.finetuned-minilm```
