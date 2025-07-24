@@ -1,5 +1,7 @@
-# KGE-LLM
+# Paper associated with project
+[Hypothetical_Tail_Embeddings.pdf](https://github.com/user-attachments/files/21397306/Hypothetical_Tail_Embeddings.pdf)
 
+# KGE-LLM
 ## Environment setup
 1. Ensure miniconda3 is installed
 2. Source conda with ```source $YOUR_PATH/miniconda3/bin/activate```
